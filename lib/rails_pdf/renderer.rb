@@ -12,24 +12,27 @@ module RailsPDF
       self
     end
 
-    def render(&block)
-      content = ApplicationController.render(file: @file, layout: @layout)
+    def locals(hash)
+      @locals = hash
+      self
+    end
 
+    def render(&block)
       logger.debug "RailsPDF ====="
       logger.debug "RailsPDF content:\n#{content}"
       logger.debug "RailsPDF ====="
-  
+
       begin
         input  = BetterTempfile.new("in.pug")
         output = BetterTempfile.new("out.pdf")
-  
+
         input.write(content)
         input.flush
-  
+
         command = "#{RailsPDF.relaxed} #{input.path.to_s} #{output.path.to_s} --basedir / --build-once"
-  
+
         logger.debug "RailsPDF ===== #{command}"
-  
+
         err = Open3.popen3(*command) do |_stdin, _stdout, stderr|
           logger.debug _stdout.read
           logger.debug '------'
@@ -68,6 +71,19 @@ module RailsPDF
     end
 
     private
+
+    def content
+      return @content if @content
+      html = ApplicationController.render(file: @file, layout: @layout, locals: @locals)
+
+      input = BetterTempfile.new("in.html")
+      input.write(html)
+      input.flush
+
+      @content = `cat #{input.path} | html2jade -`
+      input.close
+      @content
+    end
 
     def logger
       Rails.logger
