@@ -29,7 +29,7 @@ module RailsPDF
         input.write(content)
         input.flush
 
-        command = "#{RailsPDF.relaxed} #{input.path.to_s} #{output.path.to_s} --basedir / --build-once"
+        command = "#{node_modules_bin_path}/relaxed #{input.path.to_s} #{output.path.to_s} --basedir / --build-once"
 
         logger.debug "RailsPDF ===== #{command}"
 
@@ -80,7 +80,7 @@ module RailsPDF
       input.write(html)
       input.flush
 
-      @content = `cat #{input.path} | #{Rails.root}/node_modules/.bin/html2jade -`
+      @content = `cat #{input.path} | #{node_modules_bin_path}/html2jade -`
       input.close
       @content
     end
@@ -89,6 +89,9 @@ module RailsPDF
       Rails.logger
     end
 
+    def node_modules_bin_path
+      "#{Rails.root}/node_modules/.bin"
+    end
   end
 end
 
