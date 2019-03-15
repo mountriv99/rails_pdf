@@ -80,7 +80,7 @@ module RailsPDF
       input.write(html)
       input.flush
 
-      @content = `cat #{input.path} | html2jade -`
+      @content = `cat #{input.path} | #{Rails.root}/node_modules/.bin/html2jade -`
       input.close
       @content
     end
