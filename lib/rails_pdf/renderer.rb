@@ -76,6 +76,9 @@ module RailsPDF
       return @content if @content
       html = ApplicationController.render(file: @file, layout: @layout, locals: @locals)
 
+      # attempt to fix image loading
+      html.gsub!('https://', 'http://')
+
       input = BetterTempfile.new("in.html")
       input.write(html)
       input.flush
