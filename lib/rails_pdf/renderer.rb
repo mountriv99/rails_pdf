@@ -76,7 +76,8 @@ module RailsPDF
       return @content if @content
       html = ApplicationController.render(file: @file, layout: @layout, locals: @locals)
 
-      # attempt to fix image loading
+      # Images load find over https locally, but not on our engineyard environments for some reason.
+      # This gsub ensures we're hitting non-https s3 urls.
       html.gsub!('https://', 'http://')
 
       input = BetterTempfile.new("in.html")
