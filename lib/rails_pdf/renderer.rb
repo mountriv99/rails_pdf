@@ -74,7 +74,7 @@ module RailsPDF
 
     def content
       return @content if @content
-      html = ApplicationController.render(file: @file, layout: @layout, locals: @locals)
+      html = ApplicationController.render(template: @file, layout: @layout, locals: @locals)
 
       # Images load find over https locally, but not on our engineyard environments for some reason.
       # This gsub ensures we're hitting non-https s3 urls.
